@@ -22,9 +22,9 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: newman run 'collection.json' -r htmlextra
+        run: newman run 'collection.json' -r "cli,json,htmlextra"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Newman-Reports
-          path: ./Reports
+          name: newman-reports
+          path: ./newman
