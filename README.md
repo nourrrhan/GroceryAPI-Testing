@@ -10,7 +10,7 @@
 
 ## Project Description
 - Overview
-  This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
+    This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
 
 
 ### API used
