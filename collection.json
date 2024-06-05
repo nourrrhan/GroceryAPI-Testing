@@ -24,7 +24,7 @@
 							"});\r",
 							"\r",
 							"// verify response time is less than 1000ms\r",
-							"pm.test(\"Verify that response time is less than 1000ms\", function () {\r",
+							"pm.test(\"Verify that response time is less than 1500ms\", function () {\r",
 							"    pm.expect(pm.response.responseTime).to.be.below(1500);\r",
 							"});"
 						],
@@ -508,7 +508,7 @@
 							"// repeat the last 2 requests to add another item to the cart\r",
 							"var count = pm.collectionVariables.get(\"counter\");\r",
 							"pm.collectionVariables.set(\"counter\", count + 1);\r",
-							"if(count + 1 < 2){\r",
+							"if(count < 1){\r",
 							"    postman.setNextRequest(\"Get all products\");\r",
 							"}"
 						],
