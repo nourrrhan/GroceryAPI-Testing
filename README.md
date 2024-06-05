@@ -1,10 +1,10 @@
 # Simple Grocery Store API - Testing
 
 ## Table of contents
-- [Description](#Project Description)
-- [Requests](#Requests Sent to the API)
-- [Examples of Test Cases](#Test Cases Examples)
-- [How to run in Github](#How to run in Github)
+* [Description](#Project-Description)
+* [Requests](#Requests-Sent-to-the-API)
+* [Examples of Test Cases](#Test-Cases-Examples)
+* [How to run in Github](#How-to-run-in-Github)
 
 
 ## Project Description
