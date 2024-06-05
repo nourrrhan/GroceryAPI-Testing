@@ -561,7 +561,7 @@
 							"});\r",
 							"\r",
 							"// check that error message indicates that cart id is wrong\r",
-							"pm.test(\"Check that error message indicates an error in orderId\", function () {\r",
+							"pm.test(\"Check that error message indicates an error in cartID\", function () {\r",
 							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"cart\");\r",
 							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"id\");\r",
 							"});"
@@ -624,6 +624,51 @@
 						{
 							"key": "cartId",
 							"value": "{{cartID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get cart items with invalid ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that cart is not found\r",
+							"pm.test(\"Check that cart not found\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that cart id is wrong\r",
+							"pm.test(\"Check that error message indicates an error in cartID\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"cart\");\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"id\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/carts/:cartId/items",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"carts",
+						":cartId",
+						"items"
+					],
+					"variable": [
+						{
+							"key": "cartId",
+							"value": "12"
 						}
 					]
 				}
@@ -1264,6 +1309,61 @@
 			"response": []
 		},
 		{
+			"name": "Update an order with unauthorized user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that user dont have access to update orders\r",
+							"pm.test(\"Check that statue code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that the request has not been authenticated\r",
+							"pm.test(\"Check that error message indicates that user is unauthorized\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"authorization\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customerName\": \"{{customerName}}\",\r\n    \"comment\": \"this is an updated order now\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders/:orderId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						":orderId"
+					],
+					"variable": [
+						{
+							"key": "orderId",
+							"value": "{{orderId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Update an order",
 			"event": [
 				{
@@ -1314,6 +1414,60 @@
 						{
 							"key": "orderId",
 							"value": "{{orderId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete order with invalid orderID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that status code is 404\r",
+							"pm.test(\"Check that order not found\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that order id is wrong\r",
+							"pm.test(\"Check that error message indicates an error in orderId\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"order\");\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"id\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/orders/:orderId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						":orderId"
+					],
+					"variable": [
+						{
+							"key": "orderId",
+							"value": "12"
 						}
 					]
 				}
