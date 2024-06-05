@@ -21,6 +21,11 @@
 							"// check that API have status = \"UP\"\r",
 							"pm.test(\"Check API is UP\", function(){\r",
 							"    pm.expect(pm.response.json().status).to.eql(\"UP\");\r",
+							"});\r",
+							"\r",
+							"// verify response time is less than 1000ms\r",
+							"pm.test(\"Verify that response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1500);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -50,9 +55,14 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"// check that user created successfully\r",
-							"pm.test(\"Check that a user is created successfully\", function () {\r",
+							"// check that status code is 201\r",
+							"pm.test(\"Check that status code is 201\", function () {\r",
 							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// check that user access token is returned\r",
+							"pm.test(\"Check that access token is returned\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"accessToken\");\r",
 							"});\r",
 							"\r",
 							"// print and store the access token to use in the authorization\r",
@@ -69,9 +79,11 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"//pm.environment.set(\"customerName\", \"{{$randomFullName}}\");\r",
-							"//pm.environment.set(\"customerName\", pm.variables.replaceIn('{{$randomFullName}}'));\r",
-							"pm.collectionVariables.set(\"customerName\", pm.variables.replaceIn('{{$randomFullName}}'));"
+							"// generate random name and store in variable to use in the body\r",
+							"pm.collectionVariables.set(\"customerName\", pm.variables.replaceIn('{{$randomFullName}}'));\r",
+							"\r",
+							"// generate random email and store in variable to use in the body\r",
+							"pm.collectionVariables.set(\"customerEmail\", pm.variables.replaceIn('{{$randomEmail}}'));"
 						],
 						"type": "text/javascript"
 					}
@@ -82,7 +94,53 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n   \"clientName\": \"{{$randomFullName}}\",\r\n   \"clientEmail\": \"{{$randomEmail}}\"\r\n}",
+					"raw": "{\r\n   \"clientName\": \"{{customerName}}\",\r\n   \"clientEmail\": \"{{customerEmail}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api-clients",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api-clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register a client that already registered",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that status code is 409\r",
+							"pm.test(\"Check that status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that product id is missing\r",
+							"pm.test(\"Check that error message indicates that client is registered\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"already\");\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"registered\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"clientName\": \"{{customerName}}\",\r\n   \"clientEmail\": \"{{customerEmail}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -137,6 +195,186 @@
 			"response": []
 		},
 		{
+			"name": "Get specific number of products",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// generate random number and store in variable to use in the request\r",
+							"pm.collectionVariables.set('randomNumber', Math.floor(Math.random() * 20));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check status code is 200\r",
+							"pm.test(\"Check that products are returned successfully\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//console.log(pm.response.json().length);\r",
+							"\r",
+							"// check that api returned the same number of products\r",
+							"pm.test(\"Chect that response body contains \" + pm.collectionVariables.get(\"randomNumber\") + \" products\",\r",
+							"function () {\r",
+							"    pm.expect(pm.response.json().length).to.eql(pm.collectionVariables.get(\"randomNumber\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/products?results={{randomNumber}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "results",
+							"value": "{{randomNumber}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific category of products Copy",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// store possible categories in variable\r",
+							"var categories = ['meat-seafood', 'fresh-produce', 'candy', 'bread-bakery', 'dairy', 'eggs', 'coffee'];\r",
+							"\r",
+							"// select random category to send in the request\r",
+							"var randIdx = Math.floor(Math.random() * categories.length);\r",
+							"pm.collectionVariables.set('category', categories[randIdx]);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check status code is 200\r",
+							"pm.test(\"Check that products are returned successfully\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//console.log(pm.response.json().length);\r",
+							"\r",
+							"// check that the response contain only searched categories\r",
+							"pm.test(\"Check that response body only contains products of type: \" + \r",
+							"pm.collectionVariables.get(\"category\"), function () {\r",
+							"    for (var i = 0; i < pm.response.json().length; i++)\r",
+							"        pm.expect(pm.response.json()[i].category).to.eql(pm.collectionVariables.get(\"category\"));\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/products?category={{category}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "{{category}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific availability of products",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var state = [true, false];\r",
+							"\r",
+							"// select random state of availability of the products we want to return\r",
+							"var randIdx2 = Math.floor(Math.random() * state.length);\r",
+							"pm.collectionVariables.set('availability', state[randIdx2]);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check status code is 200\r",
+							"pm.test(\"Check that products are returned successfully\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json().length);\r",
+							"\r",
+							"// check that the response contain only searched categories\r",
+							"pm.test(\"Check that response body only contains products of availability: \" + \r",
+							"pm.collectionVariables.get(\"availability\"), function () {\r",
+							"    for (var i = 0; i < pm.response.json().length; i++)\r",
+							"        pm.expect(pm.response.json()[i].inStock).to.eql(pm.collectionVariables.get(\"availability\"));\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/products?available={{availability}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "available",
+							"value": "{{availability}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get all products",
 			"event": [
 				{
@@ -146,6 +384,11 @@
 							"// check status code is 200\r",
 							"pm.test(\"Check that products are returned successfully\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// check that returned data in json format \r",
+							"pm.test(\"Check that returned data in json format\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json;\");\r",
 							"});\r",
 							"\r",
 							"// get random index from 0 - 19\r",
@@ -195,6 +438,7 @@
 							"// store the schema we want to display\r",
 							"var schema = {\r",
 							"    \"type\": \"object\",\r",
+							"    \"required\": [\"id\", \"category\", \"name\", \"manufacturer\", \"price\", \"current-stock\", \"inStock\"],\r",
 							"    \"properties\": {\r",
 							"        \"id\":                   {\"type\": \"number\"},\r",
 							"        \"category\":             {\"type\": \"string\"},\r",
@@ -226,6 +470,13 @@
 					"path": [
 						"products",
 						":productId"
+					],
+					"query": [
+						{
+							"key": "product-label",
+							"value": "true",
+							"disabled": true
+						}
 					],
 					"variable": [
 						{
@@ -270,7 +521,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n   \"productId\": {{productID}}\r\n}",
+					"raw": "{\r\n   \"productId\": {{productID}},\r\n   \"quantity\": 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -286,6 +537,88 @@
 						"carts",
 						":cartId",
 						"items"
+					],
+					"variable": [
+						{
+							"key": "cartId",
+							"value": "{{cartID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a cart with invalid ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that cart is not found\r",
+							"pm.test(\"Check that cart not found\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that cart id is wrong\r",
+							"pm.test(\"Check that error message indicates an error in orderId\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"cart\");\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"id\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/carts/:cartId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"carts",
+						":cartId"
+					],
+					"variable": [
+						{
+							"key": "cartId",
+							"value": "12"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a cart",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that cart found successfully\r",
+							"pm.test(\"Check that cart details are returned successfully\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/carts/:cartId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"carts",
+						":cartId"
 					],
 					"variable": [
 						{
@@ -390,13 +723,72 @@
 			"response": []
 		},
 		{
+			"name": "Replace item in cart with missing productId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that cart item cannot replaced\r",
+							"pm.test(\"Check that item cannot be replaced\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that product id is missing\r",
+							"pm.test(\"Check that error message indicates that productId is missing\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"missing\");\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"productid\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/carts/:cartId/items/:itemId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"carts",
+						":cartId",
+						"items",
+						":itemId"
+					],
+					"variable": [
+						{
+							"key": "cartId",
+							"value": "{{cartID}}"
+						},
+						{
+							"key": "itemId",
+							"value": "{{itemID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Replace item in cart",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"// check that cart items updated successfully\r",
+							"// check that cart items replaced successfully\r",
 							"pm.test(\"Check that item replaced successfully\", function () {\r",
 							"    pm.response.to.have.status(204);\r",
 							"});"
@@ -487,6 +879,55 @@
 			"response": []
 		},
 		{
+			"name": "Create order with unauthorized user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that order is created successfully\r",
+							"pm.test(\"Check that status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"// check that error message indicates that the request has not been authenticated\r",
+							"pm.test(\"Check that error message indicates that user is unauthorized\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"authorization\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cartId\": \"{{cartID}}\",\r\n    \"customerName\": \"{{customerName}}\",\r\n    \"comment\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create a new order",
 			"event": [
 				{
@@ -521,13 +962,52 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"cartId\": \"{{cartID}}\",\r\n    \"customerName\": \"{{customerName}}\"\r\n}",
+					"raw": "{\r\n    \"cartId\": \"{{cartID}}\",\r\n    \"customerName\": \"{{customerName}}\",\r\n    \"comment\": \"\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
+				"url": {
+					"raw": "{{BaseURL}}/orders",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all orders with unauthorized user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that user dont have access to retrieve orders\r",
+							"pm.test(\"Check that statue code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that the request has not been authenticated\r",
+							"pm.test(\"Check that error message indicates that user is unauthorized\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"authorization\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
 				"url": {
 					"raw": "{{BaseURL}}/orders",
 					"host": [
@@ -576,6 +1056,59 @@
 					],
 					"path": [
 						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get order with unauthorized user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that user dont have access to retrieve orders\r",
+							"pm.test(\"Check that statue code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that the request has not been authenticated\r",
+							"pm.test(\"Check that error message indicates that user is unauthorized\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"authorization\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/orders/:orderId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						":orderId"
+					],
+					"query": [
+						{
+							"key": "invoice",
+							"value": "true",
+							"disabled": true
+						}
+					],
+					"variable": [
+						{
+							"key": "orderId",
+							"value": "{{orderId}}"
+						}
 					]
 				}
 			},
@@ -652,8 +1185,8 @@
 					],
 					"query": [
 						{
-							"key": "",
-							"value": null,
+							"key": "invoice",
+							"value": "true",
 							"disabled": true
 						}
 					],
@@ -661,6 +1194,69 @@
 						{
 							"key": "orderId",
 							"value": "{{orderId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update order with invalid orderID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that status code is 404\r",
+							"pm.test(\"Check that order not found\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that order id is wrong\r",
+							"pm.test(\"Check that error message indicates an error in orderId\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"order\");\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"id\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customerName\": \"{{customerName}}\",\r\n    \"comment\": \"this is an updated order now\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders/:orderId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						":orderId"
+					],
+					"variable": [
+						{
+							"key": "orderId",
+							"value": "12"
 						}
 					]
 				}
@@ -698,13 +1294,59 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"comment\": \"this is an updated order now\"\r\n}",
+					"raw": "{\r\n    \"customerName\": \"{{customerName}}\",\r\n    \"comment\": \"this is an updated order now\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
+				"url": {
+					"raw": "{{BaseURL}}/orders/:orderId",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						":orderId"
+					],
+					"variable": [
+						{
+							"key": "orderId",
+							"value": "{{orderId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete order with unauthorized user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check that user dont have access to delete orders\r",
+							"pm.test(\"Check that statue code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"// check that error message indicates that the request has not been authenticated\r",
+							"pm.test(\"Check that error message indicates that user is unauthorized\", function () {\r",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"error\", \"authorization\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
 				"url": {
 					"raw": "{{BaseURL}}/orders/:orderId",
 					"host": [
@@ -800,6 +1442,14 @@
 			"type": "string"
 		},
 		{
+			"key": "customerEmail",
+			"value": ""
+		},
+		{
+			"key": "customerName",
+			"value": ""
+		},
+		{
 			"key": "cartID",
 			"value": ""
 		},
@@ -816,15 +1466,23 @@
 			"value": ""
 		},
 		{
-			"key": "customerName",
-			"value": ""
-		},
-		{
 			"key": "orderId",
 			"value": ""
 		},
 		{
 			"key": "counter",
+			"value": ""
+		},
+		{
+			"key": "randomNumber",
+			"value": ""
+		},
+		{
+			"key": "category",
+			"value": ""
+		},
+		{
+			"key": "availability",
 			"value": ""
 		}
 	]
