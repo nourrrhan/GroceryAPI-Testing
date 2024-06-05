@@ -9,8 +9,7 @@
 
 
 ## Project Description
-- Overview:
-+ This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authentication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
+- Overview: This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authentication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
 
 
 ### API used
@@ -136,19 +135,19 @@ pm.test("Response has a valid Schema", function () {
 ## How to run in Github
 - Go to repository page.
 - Click on `Actions` tap.
-- ![Picture1](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/94697b91-dbc0-4d70-8457-a103989daad5)
+ ![Picture1](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/94697b91-dbc0-4d70-8457-a103989daad5)
 
 - From the `Actions` side in the left, click on `Postman-Newman-Collection`.
-- ![Picture2](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/772ca450-952c-4742-b217-2191578851a5)
+ ![Picture2](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/772ca450-952c-4742-b217-2191578851a5)
 
 - Click on `Run Workflow`.
-- ![Picture3](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/8cbfd101-0167-4e6e-a71c-116bba8ec943)
+ ![Picture3](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/8cbfd101-0167-4e6e-a71c-116bba8ec943)
 
 - Wait untill the run starts, then click on the latest run, and wait untill it finishes.
-- ![Picture4](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/eb40ebec-bbfa-4857-b5a8-80c608286f26)
+ ![Picture4](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/eb40ebec-bbfa-4857-b5a8-80c608286f26)
 
 - Scroll down to the `Artifacts` section.
-- ![Picture5](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/3e281cc6-58f0-4ce3-80a3-02032322f513)
+ ![Picture5](https://github.com/nourrrhan/GroceryAPI-Testing/assets/70220868/3e281cc6-58f0-4ce3-80a3-02032322f513)
 
 - Download `newman-reports` folder, and open the HTML file to see the report.
 
