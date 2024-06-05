@@ -10,7 +10,7 @@
 
 ## Project Description
 - Overview
-  This project is designed to test the "Simple Grocery Store API" using Postman and Newman. The tests include sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
+  This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
 
 
 ### Prerequisites to run locally
@@ -43,6 +43,20 @@
     + `GET /orders/:orderId` - Returns a details of a specific order created by the user, and try to retrieve specific order with an unauthorized user.
     + `PATCH /orders/:orderId` - Updates order details that created by a registered user, try to update specific order with an unauthorized user, and try to update order with invalid ID.
     + `DEL /orders/:orderId` - Removes a specific order created by registered user, try to remove specific order with an unauthorized user, and try to remove order with invalid ID.
+
+
+
+## Test Cases Examples
+  + Check Status Code:
+      ```
+        pm.test("Status code is 200", function () {
+            pm.response.to.have.status(200);
+        });
+      ```
+
+
+
+
 
 
 
