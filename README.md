@@ -9,7 +9,7 @@
 
 
 ## Project Description
-- Overview
+- Overview:
     This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
 
 
@@ -105,9 +105,9 @@
 ```
 + Check that Response Body is written in JSON format:
 ```
-	pm.test("Check that returned data in json format", function () {
-	    pm.expect(pm.response.headers.get("Content-Type")).to.include("application/json;");
-	});
+    pm.test("Check that returned data in json format", function () {
+        pm.expect(pm.response.headers.get("Content-Type")).to.include("application/json;");
+    });
 ```
 + Validate that Response body has a valid schema:
 ```
