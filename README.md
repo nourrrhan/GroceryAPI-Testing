@@ -10,7 +10,7 @@
 
 ## Project Description
 - Overview:
-    This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
+  This project is designed to test the "Simple Grocery Store API" using Postman and Newman. It includes sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, validating response schema, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
 
 
 ### API used
@@ -67,68 +67,68 @@
 ## Test Cases Examples
 + Check Status Code (200 OK, 401 Unauthorized, 404 Not found, etc.):
 ```
-	pm.test("Check that status code is 404", function () {
-		pm.response.to.have.status(404);
-	});
+pm.test("Check that status code is 404", function () {
+	pm.response.to.have.status(404);
+});
 ```
 + Validate Error Message:
 ```
-	pm.test("Check that error message indicates an error in orderId", function () {
-	    pm.expect(pm.response.text().toLowerCase()).to.include("error", "order");
-	    pm.expect(pm.response.text().toLowerCase()).to.include("id");
-	});
+pm.test("Check that error message indicates an error in orderId", function () {
+    pm.expect(pm.response.text().toLowerCase()).to.include("error", "order");
+    pm.expect(pm.response.text().toLowerCase()).to.include("id");
+});
 ```
 + Validate Response Time to be less than specific value:
 ```
-	pm.test("Verify that response time is less than 1500ms", function () {
-	    pm.expect(pm.response.responseTime).to.be.below(1500);
-	});
+pm.test("Verify that response time is less than 1500ms", function () {
+    pm.expect(pm.response.responseTime).to.be.below(1500);
+});
 ```
 + Check for specific Key in the Response Body:
 ```
-	pm.test("Check that access token is returned", function () {
-	    pm.expect(pm.response.json()).to.have.property("accessToken");
-	});
+pm.test("Check that access token is returned", function () {
+    pm.expect(pm.response.json()).to.have.property("accessToken");
+});
 ```
 + Check that Response Body contains the same number of searched products:
 ```
-	pm.test("Chect that response body contains " + pm.collectionVariables.get("randomNumber") + " products", function () {
-	    pm.expect(pm.response.json().length).to.eql(pm.collectionVariables.get("randomNumber"));
-	});
+pm.test("Chect that response body contains " + pm.collectionVariables.get("randomNumber") + " products", function () {
+    pm.expect(pm.response.json().length).to.eql(pm.collectionVariables.get("randomNumber"));
+});
 ```
 + Check that Response Body contains products of only searched categories:
 ```
-	pm.test("Check that response body only contains products of type: " + pm.collectionVariables.get("category"), function () {
-	    for (var i = 0; i < pm.response.json().length; i++)
-	        pm.expect(pm.response.json()[i].category).to.eql(pm.collectionVariables.get("category"));
-	});
+pm.test("Check that response body only contains products of type: " + pm.collectionVariables.get("category"), function () {
+    for (var i = 0; i < pm.response.json().length; i++)
+        pm.expect(pm.response.json()[i].category).to.eql(pm.collectionVariables.get("category"));
+});
 ```
 + Check that Response Body is written in JSON format:
 ```
-    pm.test("Check that returned data in json format", function () {
-        pm.expect(pm.response.headers.get("Content-Type")).to.include("application/json;");
-    });
+pm.test("Check that returned data in json format", function () {
+    pm.expect(pm.response.headers.get("Content-Type")).to.include("application/json;");
+});
 ```
 + Validate that Response body has a valid schema:
 ```
-	// define the schema
-	var schema = {
-	    "type": "object",
-	    "required": ["id", "category", "name", "manufacturer", "price", "current-stock", "inStock"],
-	    "properties": {
-	        "id":                   {"type": "number"},
-	        "category":             {"type": "string"},
-	        "name":                 {"type": "string"},
-	        "manufacturer":         {"type": "string"},
-	        "price":                {"type": "number"},
-	        "current-stock":        {"type": "number"},
-	        "inStock":              {"type": "boolean"}
-	    }
-	};
-	// test the response with the schema
-	pm.test("Response has a valid Schema", function () {
-	    pm.response.to.have.jsonSchema(schema);
-	});
+// define the schema
+var schema = {
+    "type": "object",
+    "required": ["id", "category", "name", "manufacturer", "price", "current-stock", "inStock"],
+    "properties": {
+        "id":                   {"type": "number"},
+        "category":             {"type": "string"},
+        "name":                 {"type": "string"},
+        "manufacturer":         {"type": "string"},
+        "price":                {"type": "number"},
+        "current-stock":        {"type": "number"},
+        "inStock":              {"type": "boolean"}
+    }
+};
+// test the response with the schema
+pm.test("Response has a valid Schema", function () {
+    pm.response.to.have.jsonSchema(schema);
+});
 ```
 
 
