@@ -7,18 +7,22 @@
 * [How to run in Github](#How-to-run-in-Github)
 
 
+
 ## Project Description
 - Overview
   This project is designed to test the "Simple Grocery Store API" using Postman and Newman. The tests include sending requests to various endpoints, validating the response by creating test cases to check status code, response time, response body, and returned data. Also check for authontication and authorization, make use of collection variables, dynamic variables, collection runner, and generating an HTML report using Newman.
+
 
 ### Prerequisites to run locally
   - Node.js and npm installed
   - Postman installed
   - Newman installed globally (`npm install -g newman`)
 
+
 ### API used
   Here you can find the documentation for the API:
   [Simple Grocery Store API](https://github.com/vdespa/Postman-Complete-Guide-API-Testing/blob/main/simple-grocery-store-api.md)
+
 
 
 ## Requests Sent to the API
