@@ -19,21 +19,21 @@
 
 
 ### Scenario used in Testing:
-1- Check API is UP.
-2- Register a client.
-3- Create a new cart.
-4- Search for all products.
-5- Search for one random product.
-6- Add the product to the cart.
-7- Repeat steps (4-6) again.
-8- Review a cart details and its items.
-9- Modify the quantity of one item.
-10- Replace one item from the cart with another product.
-11- Remove one item from the cart.
-12- Create an order using cart.
-13- Review all created orders and order details.
-14- Modify order details to add comment.
-15- Delete an order.
+- Check API is UP.
+- Register a client.
+- Create a new cart.
+- Search for all products.
+- Search for one random product.
+- Add the product to the cart.
+- Repeat steps (4-6) again.
+- Review a cart details and its items.
+- Modify the quantity of one item.
+- Replace one item from the cart with another product.
+- Remove one item from the cart.
+- Create an order using cart.
+- Review all created orders and order details.
+- Modify order details to add comment.
+- Delete an order.
 
 
 ### Prerequisites to run locally
@@ -68,7 +68,7 @@
 + Check Status Code (200 OK, 401 Unauthorized, 404 Not found, etc.):
 ```
 	pm.test("Check that status code is 404", function () {
-	    pm.response.to.have.status(404);
+		pm.response.to.have.status(404);
 	});
 ```
 + Validate Error Message:
