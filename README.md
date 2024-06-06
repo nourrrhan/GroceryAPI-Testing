@@ -39,6 +39,7 @@
   - Node.js and npm installed
   - Postman installed
   - Newman installed globally (`npm install -g newman`)
+  - Download `collection.json` file, and import to Postman.
 
 
 
